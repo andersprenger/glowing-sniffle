@@ -12,7 +12,7 @@ import CoreMotion
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
-    private var ball = SCNNode(geometry: SCNSphere(radius: 1.0))
+    private var ball = SCNNode(geometry: SCNSphere(radius: 0.75))
     private var t: Float = 0
     private var motionManager = CMMotionManager()
     
@@ -30,7 +30,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 5, z: 15)
+        cameraNode.position = SCNVector3(x: 0, y: 10, z: 10)
+        cameraNode.eulerAngles.x = -1/6
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -53,16 +54,20 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scnView.scene = scene
         
         // allows the user to manipulate the camera
-        scnView.allowsCameraControl = false
+        scnView.allowsCameraControl = true
         
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
         
         // configure the view
         scnView.backgroundColor = UIColor.black
-        
+        scene.background.contents = UIImage(named: "bgGame3")
+        scene.background.wrapS = .repeat
+        scene.background.wrapT = .repeat
         // set itself as delegate
         scnView.delegate = self
+        
+        scene.fogStartDistance = 2000000000
         
         // init functions
         createScenary()
@@ -74,7 +79,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         moveScenrary()
         
-        ball.position = SCNVector3(x: 0, y: 2 * sin(t) + 3, z: 0)
+        //ball.position = SCNVector3(x: Float(gyro), y: 2 * sin(t) + 3, z: -3)
         
         self.t += 0.1
     }
@@ -85,17 +90,24 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let nodeLength: CGFloat = 20
         
         for i in 0..<7 {
-            let ground = SCNNode(geometry: SCNBox(width: 20, height: 1, length: nodeLength, chamferRadius: 0.0))
+            let ground = SCNNode(geometry: SCNBox(width: 8, height: 0.2, length: nodeLength, chamferRadius: 0.0))
             ground.position = SCNVector3(x: 0, y: 0, z: 0)
-            ground.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "rbmosaic")
+            ground.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "floorColor")
             
-            let left = SCNNode(geometry: SCNBox(width: 5, height: 20, length: nodeLength, chamferRadius: 0.0))
-            left.position = SCNVector3(x: -10, y: 5, z: 0)
-            left.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "gmosaic")
+            let left = SCNNode(geometry: SCNCylinder(radius: 0.1, height: nodeLength))
+            left.eulerAngles.x = -.pi / 2
+            left.position = SCNVector3(x: -4.4, y: 0, z: 0)
+            left.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralBase")
+            left.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralBase")
+            left.geometry?.firstMaterial?.emission.intensity = 0.5
             
-            let right = SCNNode(geometry: SCNBox(width: 5, height: 20, length: nodeLength, chamferRadius: 0.0))
-            right.position = SCNVector3(x: 10, y: 5, z: 0)
-            right.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "gmosaic")
+            
+            let right = SCNNode(geometry: SCNCylinder(radius: 0.1, height: nodeLength))
+            right.eulerAngles.x = -.pi / 2
+            right.position = SCNVector3(x: 4.4, y: 0, z: 0)
+            right.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralBase")
+            right.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralBase")
+            right.geometry?.firstMaterial?.emission.intensity = 0.5
             
             let node = SCNNode()
             node.name = "ground"
@@ -104,6 +116,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             node.addChildNode(right)
             node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -20)
             
+            let filter = CIFilter(name: "CIGaussianBlur")
+            filter!.setValue(1, forKey: kCIInputRadiusKey)
+            
+            left.filters = [filter!]
+            right.filters = [filter!]
+            
+            let omniLight = SCNLight()
+            omniLight.type = .omni
+            omniLight.color = UIColor(named: "lateralBase")
+//            left.light = omniLight
+//            right.light = omniLight
+
             let scnView = self.view as! SCNView
             scnView.scene?.rootNode.addChildNode(node)
         }
@@ -130,7 +154,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     func createBall() {
         ball.position = SCNVector3(x: 0, y: 3, z: 0)
         ball.name = "ball"
-        ball.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
+        ball.geometry?.firstMaterial?.diffuse.contents = UIColor.red
         
         ball.geometry?.firstMaterial?.emission.contents = UIColor.red
         ball.geometry?.firstMaterial?.emission.intensity = 0.5
@@ -147,6 +171,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         omniLight.type = .omni
         omniLight.color = UIColor.red
         ball.light = omniLight
+    }
+    
+    var gyro: Double = 0
+    
+    func updateGyro() {
+        if motionManager.isGyroAvailable {
+            motionManager.gyroUpdateInterval = 1/100
+            motionManager.startGyroUpdates(to: .main) { data, error in
+                guard let validData = data else { return }
+                self.gyro = validData.rotationRate.x
+            }
+        }
     }
     
     // MARK: -- Configurations
