@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  RunningX
 //
-//  Created by Anderson Renan Paniz Sprenger on 09/09/21.
+//  Created by Anderson Sprenger on 09/09/21.
 //
 
 import UIKit
