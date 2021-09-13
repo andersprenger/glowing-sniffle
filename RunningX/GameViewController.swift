@@ -79,6 +79,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         createBall()
         userCommand()
         
+        
+        makeObstacles()
+        
     }
     
     // MARK: -- Update
@@ -90,8 +93,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main){
                 (data, error) in
                 guard let validData = data else{return}
-//                self.force = SCNVector3( , 0 , -1)
-                print( validData.attitude.pitch*58)
+                
                 self.yaw = validData.attitude.pitch*58
                             
             }
@@ -101,7 +103,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         
     }
-    
+    func randomPercent() -> Double {
+      return Double(arc4random() % 1000) / 10.0;
+    }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         moveScenrary()
@@ -110,13 +114,57 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
 //        ball.physicsBody?.applyForce(force, asImpulse: false)
         self.t += 0.1
         ball.position = SCNVector3(x: Float(yaw) * -0.1, y:1 , z: -3)
+        
+        
+
+        let randomNumber = randomPercent()
+        switch(randomNumber) {
+        case 95..<97.5:
+            makeObstacles()
+            print("ASHDUIAHDIUHASIUSDHAUIS")
+        default:
+          print("500% better to 2000% better then current item level")
+        }
+        
     }
     
     // MARK: -- Functions
     
+    
+    
+    
+    func makeObstacles(){
+        
+        
+        let leftPole = SCNNode(geometry: SCNBox(width: 0.2, height: 10, length: 0.2, chamferRadius: 0.0))
+        leftPole.position = SCNVector3(x: -4.4, y: 5, z: -10)
+        leftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        leftPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        leftPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        let rightPole = SCNNode(geometry: SCNBox(width: 0.2, height: 10, length: 0.2, chamferRadius: 0.0))
+        rightPole.position = SCNVector3(x: +4.4, y: 5, z: -10)
+        rightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        rightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        rightPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        let node = SCNNode()
+        node.name = "obstacle"
+        node.addChildNode(leftPole)
+        node.addChildNode(rightPole)
+        node.position = SCNVector3(x: 0, y: 0, z: Float(5) * -1 * Float(nodeLength))
+        
+        
+        
+        let scnView = self.view as! SCNView
+        scnView.scene?.rootNode.addChildNode(node)
+        
+        
+        
+    }
+    
     func createScenary() {
          
-        
         for i in 0..<howManyNodes { //7
             let ground = SCNNode(geometry: SCNBox(width: 8, height: 0.2, length: nodeLength, chamferRadius: 0.0))
             ground.position = SCNVector3(x: 0, y: 0, z: 0)
@@ -144,6 +192,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             
             let node = SCNNode()
             node.name = "ground"
+            
+            
             node.addChildNode(ground)
             node.addChildNode(leftGreen)
             node.addChildNode(leftPurple)
@@ -182,6 +232,21 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
                     node.position.z -= Float(self.howManyNodes)*Float(self.nodeLength)
                 }
             }
+            
+            let nodesObsta = scnView.scene?.rootNode.childNodes.filter { node in
+                node.name == "obstacle"
+            }
+            
+            for node in nodesObsta! {
+                node.position.z += 0.2
+                
+                if node.position.z > Float(self.nodeLength) {
+                    node.removeFromParentNode()
+                }
+                
+            }
+            
+            
         }
     }
     
