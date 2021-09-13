@@ -8,13 +8,20 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import CoreMotion
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
-    private var ball = SCNNode(geometry: SCNSphere(radius: 0.75))
+    private var ball = SCNNode(geometry: SCNSphere(radius: 0.30))
     private var t: Float = 0
-    
+    let nodeLength: CGFloat = 20
+    let howManyNodes : Int = 7
+    var motionManager = CMMotionManager()
+    var updateRate : Double = 1/60
+//    var force : SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
+    var yaw : Double = 0
     // MARK: -- Init
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,8 +35,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 10, z: 10)
-        cameraNode.eulerAngles.x = -1/6
+        cameraNode.position = SCNVector3(x: 0, y: 5, z: 0)
+        cameraNode.eulerAngles.x = -1/2
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -68,25 +75,49 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         // init functions
         createScenary()
+        
         createBall()
+        userCommand()
+        
     }
     
     // MARK: -- Update
     
+    func userCommand(){
+        
+        if motionManager.isDeviceMotionAvailable{
+            motionManager.deviceMotionUpdateInterval = updateRate
+            motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main){
+                (data, error) in
+                guard let validData = data else{return}
+//                self.force = SCNVector3( , 0 , -1)
+                print( validData.attitude.pitch*58)
+                self.yaw = validData.attitude.pitch*58
+                            
+            }
+            
+        }
+        
+        
+        
+    }
+    
+    
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        //moveScenrary()
+        moveScenrary()
         
-        ball.position = SCNVector3(x: Float(0), y: 2 * sin(t) + 3, z: -3)
         
+//        ball.physicsBody?.applyForce(force, asImpulse: false)
         self.t += 0.1
+        ball.position = SCNVector3(x: Float(yaw) * -0.1, y:1 , z: -3)
     }
     
     // MARK: -- Functions
     
     func createScenary() {
-        let nodeLength: CGFloat = 20
+         
         
-        for i in 0..<7 {
+        for i in 0..<howManyNodes { //7
             let ground = SCNNode(geometry: SCNBox(width: 8, height: 0.2, length: nodeLength, chamferRadius: 0.0))
             ground.position = SCNVector3(x: 0, y: 0, z: 0)
             ground.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "floorColor")
@@ -118,7 +149,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             node.addChildNode(leftPurple)
             node.addChildNode(rightGreen)
             node.addChildNode(rightPurple)
-            node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -20)
+            node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -1 * Float(nodeLength))
 
 //            let filter = CIFilter(name: "CIGaussianBlur")
 //            filter!.setValue(1, forKey: kCIInputRadiusKey)
@@ -136,26 +167,26 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         }
     }
     
-//    func moveScenrary() {
-//        DispatchQueue.main.async {
-//            let scnView = self.view as! SCNView
-//
-//            let nodes = scnView.scene?.rootNode.childNodes.filter { node in
-//                node.name == "ground"
-//            }
-//
-//            for node in nodes! {
-//                node.position.z += 0.2
-//
-//                if node.position.z > 20 {
-//                    node.position.z -= 120
-//                }
-//            }
-//        }
-//    }
+    func moveScenrary() {
+        DispatchQueue.main.async {
+            let scnView = self.view as! SCNView
+
+            let nodes = scnView.scene?.rootNode.childNodes.filter { node in
+                node.name == "ground"
+            }
+
+            for node in nodes! {
+                node.position.z += 0.2
+
+                if node.position.z > Float(self.nodeLength) {
+                    node.position.z -= Float(self.howManyNodes)*Float(self.nodeLength)
+                }
+            }
+        }
+    }
     
     func createBall() {
-        ball.position = SCNVector3(x: 0, y: 3, z: 0)
+        
         ball.name = "ball"
         ball.geometry?.firstMaterial?.diffuse.contents = UIColor.red
         
@@ -163,7 +194,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         //ball.geometry?.firstMaterial?.emission.intensity = 0.5
         
         let scnView = self.view as! SCNView
+        ball.position = SCNVector3(x: Float(0), y:1 , z: -3)
+        
         scnView.scene?.rootNode.addChildNode(ball)
+        
         
 //        let omniLight = SCNLight()
 //        omniLight.type = .omni
@@ -174,7 +208,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     // MARK: -- Configurations
     
     override var shouldAutorotate: Bool {
-        return false
+        return true
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -183,7 +217,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
+            return .landscape
         } else {
             return .all
         }
