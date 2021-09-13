@@ -11,16 +11,20 @@ import SceneKit
 import CoreMotion
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
-    
+    // general vars
     private var ball = SCNNode(geometry: SCNSphere(radius: 0.30))
     private var t: Float = 0
-    let nodeLength: CGFloat = 20
-    let howManyNodes : Int = 7
     var motionManager = CMMotionManager()
     var updateRate : Double = 1/60
-//    var force : SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
     var yaw : Double = 0
-    // MARK: -- Init
+    
+    // ground
+    let nodeLength: CGFloat = 20
+    let howManyNodes : Int = 7
+    
+    // obstacles
+    let obstaclesHeight : CGFloat = 5
+    let obstacleWidth : CGFloat = 0.2
     
     
     override func viewDidLoad() {
@@ -35,8 +39,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 5, z: 0)
-        cameraNode.eulerAngles.x = -1/2
+        cameraNode.position = SCNVector3(x: 0, y: 3, z: 0)
+        cameraNode.eulerAngles.x = -1/3
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -113,7 +117,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
 //        ball.physicsBody?.applyForce(force, asImpulse: false)
         self.t += 0.1
-        ball.position = SCNVector3(x: Float(yaw) * -0.1, y:1 , z: -3)
+        ball.position = SCNVector3(x: Float(yaw) * 0.1, y:1 , z: -3)
         
         
 
@@ -136,22 +140,34 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     func makeObstacles(){
         
         
-        let leftPole = SCNNode(geometry: SCNBox(width: 0.2, height: 10, length: 0.2, chamferRadius: 0.0))
-        leftPole.position = SCNVector3(x: -4.4, y: 5, z: -10)
+        let leftPole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: obstaclesHeight, length: 0.2, chamferRadius: 0.0))
+        leftPole.position = SCNVector3(x: -4.4, y: Float(obstaclesHeight)/2, z: -10)
         leftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         leftPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         leftPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
-        let rightPole = SCNNode(geometry: SCNBox(width: 0.2, height: 10, length: 0.2, chamferRadius: 0.0))
-        rightPole.position = SCNVector3(x: +4.4, y: 5, z: -10)
+        let rightPole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: obstaclesHeight, length: 0.2, chamferRadius: 0.0))
+        rightPole.position = SCNVector3(x: +4.4, y: Float(obstaclesHeight)/2, z: -10)
         rightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         rightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         rightPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        
+        let topPole = SCNNode(geometry: SCNBox(width: 8.8 + obstacleWidth, height: 0.2, length: 0.2, chamferRadius: 0.0))
+        topPole.position = SCNVector3(x: 0, y: Float(obstaclesHeight), z: -10)
+        topPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        topPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        topPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        
+        
+        
         
         let node = SCNNode()
         node.name = "obstacle"
         node.addChildNode(leftPole)
         node.addChildNode(rightPole)
+        node.addChildNode(topPole)
         node.position = SCNVector3(x: 0, y: 0, z: Float(5) * -1 * Float(nodeLength))
         
         
