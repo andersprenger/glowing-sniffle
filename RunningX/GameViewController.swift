@@ -8,13 +8,11 @@
 import UIKit
 import QuartzCore
 import SceneKit
-import CoreMotion
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
     private var ball = SCNNode(geometry: SCNSphere(radius: 0.75))
     private var t: Float = 0
-    private var motionManager = CMMotionManager()
     
     // MARK: -- Init
     
@@ -64,10 +62,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scene.background.contents = UIImage(named: "bgGame3")
         scene.background.wrapS = .repeat
         scene.background.wrapT = .repeat
+        
         // set itself as delegate
         scnView.delegate = self
-        
-        scene.fogStartDistance = 2000000000
         
         // init functions
         createScenary()
@@ -77,9 +74,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     // MARK: -- Update
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        moveScenrary()
+        //moveScenrary()
         
-        ball.position = SCNVector3(x: Float(gyro), y: 2 * sin(t) + 3, z: -3)
+        ball.position = SCNVector3(x: Float(0), y: 2 * sin(t) + 3, z: -3)
         
         self.t += 0.1
     }
@@ -94,32 +91,37 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             ground.position = SCNVector3(x: 0, y: 0, z: 0)
             ground.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "floorColor")
             
-            let left = SCNNode(geometry: SCNBox(width: 0.2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
-//            left.eulerAngles.x = .pi / 2
-            left.position = SCNVector3(x: -4.4, y: 0, z: 0)
-            left.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
-            // trava
-            left.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralBase")
-            left.geometry?.firstMaterial?.emission.intensity = 0.5
+            let leftGreen = SCNNode(geometry: SCNBox(width: 0.2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
+            leftGreen.position = SCNVector3(x: -4.4, y: 0, z: 0)
+            leftGreen.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+            leftGreen.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+            leftGreen.geometry?.firstMaterial?.emission.intensity = 0.5
+            
+            let leftPurple = SCNNode(geometry: SCNBox(width: 2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
+            leftPurple.position = SCNVector3(x: -6, y: 0, z: 0)
+            leftPurple.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralPurple")
 
-            let right = SCNNode(geometry: SCNBox(width: 0.2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
-//            right.eulerAngles.x = .pi / 2
-            right.position = SCNVector3(x: 4.4, y: 0, z: 0)
-            right.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
-            //
-            right.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralBase")
-            right.geometry?.firstMaterial?.emission.intensity = 0.5
+            let rightGreen = SCNNode(geometry: SCNBox(width: 0.2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
+            rightGreen.position = SCNVector3(x: 4.4, y: 0, z: 0)
+            rightGreen.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+            rightGreen.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+            rightGreen.geometry?.firstMaterial?.emission.intensity = 0.5
+            
+            let rightPurple = SCNNode(geometry: SCNBox(width: 2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
+            rightPurple.position = SCNVector3(x: 6, y: 0, z: 0)
+            rightPurple.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralPurple")
             
             let node = SCNNode()
             node.name = "ground"
             node.addChildNode(ground)
-            node.addChildNode(left)
-            node.addChildNode(right)
+            node.addChildNode(leftGreen)
+            node.addChildNode(leftPurple)
+            node.addChildNode(rightGreen)
+            node.addChildNode(rightPurple)
             node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -20)
-//            // aqui
+
 //            let filter = CIFilter(name: "CIGaussianBlur")
 //            filter!.setValue(1, forKey: kCIInputRadiusKey)
-//            // aqui
 //            left.filters = [filter!]
 //            right.filters = [filter!]
             
@@ -134,23 +136,23 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         }
     }
     
-    func moveScenrary() {
-        DispatchQueue.main.async {
-            let scnView = self.view as! SCNView
-            
-            let nodes = scnView.scene?.rootNode.childNodes.filter { node in
-                node.name == "ground"
-            }
-            
-            for node in nodes! {
-                node.position.z += 0.2
-                
-                if node.position.z > 20 {
-                    node.position.z -= 120
-                }
-            }
-        }
-    }
+//    func moveScenrary() {
+//        DispatchQueue.main.async {
+//            let scnView = self.view as! SCNView
+//
+//            let nodes = scnView.scene?.rootNode.childNodes.filter { node in
+//                node.name == "ground"
+//            }
+//
+//            for node in nodes! {
+//                node.position.z += 0.2
+//
+//                if node.position.z > 20 {
+//                    node.position.z -= 120
+//                }
+//            }
+//        }
+//    }
     
     func createBall() {
         ball.position = SCNVector3(x: 0, y: 3, z: 0)
@@ -158,7 +160,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         ball.geometry?.firstMaterial?.diffuse.contents = UIColor.red
         
         ball.geometry?.firstMaterial?.emission.contents = UIColor.red
-        ball.geometry?.firstMaterial?.emission.intensity = 0.5
+        //ball.geometry?.firstMaterial?.emission.intensity = 0.5
         
         let scnView = self.view as! SCNView
         scnView.scene?.rootNode.addChildNode(ball)
@@ -167,18 +169,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
 //        omniLight.type = .omni
 //        omniLight.color = UIColor.red
 //        ball.light = omniLight
-    }
-    
-    var gyro: Double = 0
-    
-    func updateGyro() {
-        if motionManager.isGyroAvailable {
-            motionManager.gyroUpdateInterval = 1/100
-            motionManager.startGyroUpdates(to: .main) { data, error in
-                guard let validData = data else { return }
-                self.gyro = validData.rotationRate.x
-            }
-        }
     }
     
     // MARK: -- Configurations
