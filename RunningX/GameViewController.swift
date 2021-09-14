@@ -161,17 +161,24 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             leftSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
             leftSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
             
-            let blackHoleImage = SCNNode(geometry: SCNCylinder(radius: 1, height: 0.2))
-            blackHoleImage.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "blackHole")
+            let bhheight: Float = 0.08
             
-            let blackHoleRing1 = SCNNode(geometry: SCNTorus(ringRadius: 1.5, pipeRadius: 0.25))
+            let blackHoleImage = SCNNode(geometry: SCNCylinder(radius: 1, height: 0.2))
+            blackHoleImage.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "blsckholebg2")
+            blackHoleImage.position = SCNVector3(0, bhheight, 0)
+            
+            let blackHoleRing1 = SCNNode(geometry: SCNTorus(ringRadius: 1.5, pipeRadius: 0.05))
+            blackHoleRing1.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralGreen")
             blackHoleRing1.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
             blackHoleRing1.geometry?.firstMaterial?.emission.intensity = 0.5
+            blackHoleRing1.position = SCNVector3(0, bhheight, 0)
             
-            let blackHoleRing2 = SCNNode(geometry: SCNTorus(ringRadius: 1.75, pipeRadius: 0.25))
-            blackHoleRing2.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+            let blackHoleRing2 = SCNNode(geometry: SCNTorus(ringRadius: 1.75, pipeRadius: 0.05))
+            blackHoleRing2.geometry?.firstMaterial?.diffuse.contents = UIColor.purple
+            blackHoleRing2.geometry?.firstMaterial?.emission.contents = UIColor.purple
             blackHoleRing2.geometry?.firstMaterial?.emission.intensity = 0.5
-            
+            blackHoleRing2.position = SCNVector3(0, bhheight, 0)
+
             let blackHole = SCNNode()
             blackHole.addChildNode(blackHoleImage)
             blackHole.addChildNode(blackHoleRing1)
@@ -184,6 +191,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             node.addChildNode(topPole)
             node.addChildNode(topSquareObstaclePole)
             node.addChildNode(leftSquareObstaclePole)
+            node.addChildNode(blackHole)
             node.position = SCNVector3(x: 0, y: 0, z: Float(5) * -1 * Float(self.nodeLength))
             
             let scnView = self.view as! SCNView
