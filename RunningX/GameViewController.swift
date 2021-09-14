@@ -15,7 +15,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     // ball
     private let ballRadius : CGFloat = 0.3
     var ball : SCNNode  = SCNNode()
-    let ballLevel : Float = 0.5
+    var ballLevel : Float = 0.2 / 2 + 0.3
     
     // general vars
     private var t: Float = 0
@@ -37,6 +37,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         ball = SCNNode(geometry: SCNSphere(radius: ballRadius))
+        ballLevel = Float(groundHeight) / 2 + Float(ballRadius)
         // create a new scene
         let scene = SCNScene()
         
@@ -153,6 +154,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         let randomPlace = Float(randomGroundPercent/100) * Float(groundWidth) - Float(groundWidth)/2
         
+        
+        // big rectangle
+        
         let leftPole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: obstaclesHeight, length: 0.2, chamferRadius: 0.0))
         leftPole.position = SCNVector3(x: -4.4, y: Float(obstaclesHeight)/2, z: -10)
         leftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
@@ -174,10 +178,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         
         
-        
+        // litleSquareObstacle
         
         let squareSide : CGFloat =  ballRadius * 4
-        
         
         let topSquareObstaclePole = SCNNode(geometry: SCNBox(width: (squareSide) + obstacleWidth   , height: obstacleWidth , length: 0.05, chamferRadius: 0.0))
         
@@ -190,7 +193,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         let leftSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( squareSide) , length: 0.05, chamferRadius: 0.0))
         let yObstacleLeft : Float = ballLevel + Float(groundHeight)/2 + ( Float(ballRadius) * 4) / 2 - Float(ballRadius)
-        leftSquareObstaclePole.position = SCNVector3(x: -Float(squareSide / 2) + randomPlace, y: yObstacleLeft, z: -10)
+        let xLeftlitleSquarePosition = -Float(squareSide / 2) + randomPlace
+        leftSquareObstaclePole.position = SCNVector3(x: xLeftlitleSquarePosition , y: yObstacleLeft, z: -10)
         leftSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
@@ -203,6 +207,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         rightSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         rightSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
 
+        
+        
+        // down poles NAO FOI LIGADO 
+        
+        let DownleftPole = SCNNode(geometry: SCNBox(width:  obstacleWidth, height: 0.2, length: 0.2, chamferRadius: 0.0))
+        DownleftPole.position = SCNVector3(x: 0, y: Float(obstaclesHeight), z: -10)
+        DownleftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        DownleftPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        DownleftPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        
+        let DownrightPole = SCNNode(geometry: SCNBox(width: 8.8 + obstacleWidth, height: 0.2, length: 0.2, chamferRadius: 0.0))
+        DownrightPole.position = SCNVector3(x: 0, y: Float(obstaclesHeight), z: -10)
+        DownrightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        DownrightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        DownrightPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
         
         let node = SCNNode()
