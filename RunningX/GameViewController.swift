@@ -46,8 +46,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 2, z: 0)
-        cameraNode.eulerAngles.x = -1/3
+        cameraNode.position = SCNVector3(x: 0, y: Float(ballRadius) * 5 + ballLevel , z: 0)
+        cameraNode.eulerAngles.x = -1/6
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -172,21 +172,37 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         topPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         topPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
-        let topSquareObstaclePole = SCNNode(geometry: SCNBox(width: ( ballRadius * 3) , height: obstacleWidth , length: 0.05, chamferRadius: 0.0))
         
-        let yObstacleTop : Float = ballLevel + Float(groundHeight)/2 + (Float(ballRadius) * 3 ) - Float(ballRadius)
+        
+        
+        
+        let squareSide : CGFloat =  ballRadius * 4
+        
+        
+        let topSquareObstaclePole = SCNNode(geometry: SCNBox(width: (squareSide) + obstacleWidth   , height: obstacleWidth , length: 0.05, chamferRadius: 0.0))
+        
+        let yObstacleTop : Float = ballLevel + Float(groundHeight)/2 + (Float(ballRadius) * 4 ) - Float(ballRadius)
         
         topSquareObstaclePole.position = SCNVector3(x: 0 + randomPlace , y: yObstacleTop, z: -10)
         topSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         topSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         topSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
         
-        let leftSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( ballRadius * 3) , length: 0.05, chamferRadius: 0.0))
-        let yObstacleLeft : Float = ballLevel + Float(groundHeight)/2 + ( Float(ballRadius) * 3) / 2 - Float(ballRadius)
-        leftSquareObstaclePole.position = SCNVector3(x: -Float(ballRadius)*1.5 + randomPlace, y: yObstacleLeft, z: -10)
+        let leftSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( squareSide) , length: 0.05, chamferRadius: 0.0))
+        let yObstacleLeft : Float = ballLevel + Float(groundHeight)/2 + ( Float(ballRadius) * 4) / 2 - Float(ballRadius)
+        leftSquareObstaclePole.position = SCNVector3(x: -Float(squareSide / 2) + randomPlace, y: yObstacleLeft, z: -10)
         leftSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        let rightSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( squareSide) , length: 0.05, chamferRadius: 0.0))
+        let yObstacleRight : Float = ballLevel + Float(groundHeight)/2 +  Float(squareSide) / 2 - Float(ballRadius)
+                                                                           
+        rightSquareObstaclePole.position = SCNVector3(x: Float(squareSide / 2) + randomPlace, y: yObstacleRight, z: -10)
+        rightSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        rightSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        rightSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
+
         
         
         let node = SCNNode()
@@ -196,6 +212,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         node.addChildNode(topPole)
         node.addChildNode(topSquareObstaclePole)
         node.addChildNode(leftSquareObstaclePole)
+        node.addChildNode(rightSquareObstaclePole)
         node.position = SCNVector3(x: 0, y: 0, z: Float(5) * -1 * Float(nodeLength))
         
         
