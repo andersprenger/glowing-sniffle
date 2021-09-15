@@ -10,12 +10,23 @@ import QuartzCore
 import SceneKit
 import CoreMotion
 
+public let label = UILabel()
+
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
    
     // ball
     private let ballRadius : CGFloat = 0.3
     var ball : SCNNode  = SCNNode()
     var ballLevel : Float = 0.2 / 2 + 0.3
+   
+    // timer
+    public var somaTimer = 0
+        @objc func runTimer() -> Int {
+            somaTimer += 1
+            label.text = "Score: \(self.somaTimer)"
+            return somaTimer
+        }
+
     
     // general vars
     private var t: Float = 0
@@ -90,6 +101,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         createScenary()
         
         createBall()
+        createTimer()
         userCommand()
         
         
@@ -345,6 +357,17 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         //        ball.light = omniLight
     }
     
+    func createTimer(){
+        let timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(runTimer), userInfo: nil, repeats: true)
+                
+                label.textColor = .white
+                label.font = UIFont(name: "Arial", size: 30)
+                label.text = "Score: \(self.somaTimer)"
+                label.frame = CGRect(x: 40, y: 20, width: 250, height: 50)
+       
+        let scnView = self.view as! SCNView
+        scnView.addSubview(label)
+    }
     // MARK: -- Configurations
     
     override var shouldAutorotate: Bool {
