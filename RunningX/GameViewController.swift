@@ -175,7 +175,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         let topPole = SCNNode(geometry: SCNBox(width: totalTopObstacleSize , height: 0.2, length: 0.2, chamferRadius: 0.0))
         topPole.position = SCNVector3(x: 0, y: Float(obstaclesHeight), z: -10)
-        topPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        topPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         topPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         topPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
@@ -190,7 +190,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let yObstacleTop : Float = ballLevel + Float(groundHeight)/2 + (Float(squareSide) ) - Float(ballRadius)
         
         topSquareObstaclePole.position = SCNVector3(x: 0 + randomPlace , y: yObstacleTop, z: -10)
-        topSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        topSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         topSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         topSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
         
@@ -226,14 +226,14 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         let downLeftPole = SCNNode(geometry: SCNBox(width:  leftDownPoleWidth, height: 0.2, length: 0.2, chamferRadius: 0.0))
         downLeftPole.position = SCNVector3(x: leftDownPoleXPosition , y:  yObstacleRight - ( Float(squareSide) / 2 ) , z: -10)
-        downLeftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        downLeftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         downLeftPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         downLeftPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
         
         let downRightPole = SCNNode(geometry: SCNBox(width: rightDownPoleWidth , height: obstacleWidth , length: 0.2, chamferRadius: 0.0))
         downRightPole.position = SCNVector3(x: rightDownPoleXPosition, y: yObstacleRight - ( Float(squareSide) / 2 ) , z: -10)
-        downRightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        downRightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         downRightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         downRightPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
