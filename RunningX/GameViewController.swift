@@ -291,7 +291,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             let node = SCNNode()
             node.name = "ground"
             
-<<<<<<< HEAD
             let bhheight: Float = 0.08
             
             let blackHoleImage = SCNNode(geometry: SCNCylinder(radius: 1.0, height: 0.2))
@@ -323,8 +322,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             blackHole.addChildNode(blackHoleRing3)
             blackHole.name = "blackHole"
             
-=======
->>>>>>> anderson
             node.addChildNode(ground)
             node.addChildNode(leftGreen)
             node.addChildNode(leftPurple)
