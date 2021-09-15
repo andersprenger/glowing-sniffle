@@ -213,10 +213,16 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         
         let leftDownPoleXPosition : Float =   ( -Float(groundWidth)/2 + xLeftlitleSquarePosition) / 2 - 0.2 + 0.05
-        let rightDownPoleXPosition : Float = (Float(groundWidth)/2 - (xLeftlitleSquarePosition + Float(squareSide))  ) / 2
+//        let rightDownPoleXPosition : Float = (Float(groundWidth)/2 - (xLeftlitleSquarePosition + Float(squareSide))  ) / 2
+        
+        
         
         let leftDownPoleWidth : CGFloat = groundWidth * CGFloat(randomGroundPercent)/100 - 0.2
-        let rightDownPoleWidth : CGFloat = groundWidth - (groundWidth * CGFloat(randomGroundPercent)/100 ) - squareSide
+        
+        
+        let rightDownPoleWidth : CGFloat = groundWidth - leftDownPoleWidth - 0.2
+        let rightDownPoleXPosition : Float = rightSquareObstaclePole.position.x + (Float(rightDownPoleWidth) / 2) - Float(obstacleWidth)/2
+        
         // down poles
         
         let downLeftPole = SCNNode(geometry: SCNBox(width:  leftDownPoleWidth, height: 0.2, length: 0.2, chamferRadius: 0.0))
@@ -226,7 +232,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         downLeftPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
         
-        let downRightPole = SCNNode(geometry: SCNBox(width: 1 , height: obstacleWidth , length: 0.2, chamferRadius: 0.0))
+        let downRightPole = SCNNode(geometry: SCNBox(width: rightDownPoleWidth , height: obstacleWidth , length: 0.2, chamferRadius: 0.0))
         downRightPole.position = SCNVector3(x: rightDownPoleXPosition, y: yObstacleRight - ( Float(squareSide) / 2 ) , z: -10)
         downRightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         downRightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
@@ -242,7 +248,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         node.addChildNode(leftSquareObstaclePole)
         node.addChildNode(rightSquareObstaclePole)
         
-        //node.addChildNode(downLeftPole)
+        node.addChildNode(downLeftPole)
         node.addChildNode(downRightPole)
         node.position = SCNVector3(x: 0, y: 0, z: Float(5) * -1 * Float(nodeLength))
         
