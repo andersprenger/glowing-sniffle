@@ -8,17 +8,46 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import CoreMotion
+
+public let label = UILabel()
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
+   
+    // timer
+    public var somaTimer = 0
+        @objc func runTimer() -> Int {
+            somaTimer += 1
+            label.text = "Score: \(self.somaTimer)"
+            return somaTimer
+        }
+
     
-    private var ball = SCNNode(geometry: SCNSphere(radius: 0.75))
+    // ball
+    private let ballRadius : CGFloat = 0.3
+    var ball : SCNNode  = SCNNode()
+    let ballLevel : Float = 0.5
+    
+    // general vars
     private var t: Float = 0
+    var motionManager = CMMotionManager()
+    var updateRate : Double = 1/60
+    var yaw : Double = 0
     
-    // MARK: -- Init
+    
+    // ground
+    let nodeLength: CGFloat = 20
+    let howManyNodes : Int = 7
+    let groundHeight : CGFloat = 0.2
+    let groundWidth : CGFloat = 8
+    // obstacles
+    let obstaclesHeight : CGFloat = 2.5
+    let obstacleWidth : CGFloat = 0.1
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        ball = SCNNode(geometry: SCNSphere(radius: ballRadius))
         // create a new scene
         let scene = SCNScene()
         
@@ -28,8 +57,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 10, z: 10)
-        cameraNode.eulerAngles.x = -1/6
+        cameraNode.position = SCNVector3(x: 0, y: 2, z: 0)
+        cameraNode.eulerAngles.x = -1/3
         
         // create and add a light to the scene
         let lightNode = SCNNode()
@@ -68,26 +97,121 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         // init functions
         createScenary()
+        
         createBall()
+        createTimer()
+        userCommand()
+        
+        
+        makeObstacles()
     }
     
-    // MARK: -- Update
+    
+    func userCommand(){
+        
+        if motionManager.isDeviceMotionAvailable{
+            motionManager.deviceMotionUpdateInterval = updateRate
+            motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main){ (data, error) in
+                guard let validData = data else{return}
+                
+                self.yaw = validData.attitude.pitch*58
+            }
+        }
+    }
+    
+    func randomPercent() -> Double {
+        return Double(arc4random() % 1000) / 10.0;
+    }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        //moveScenrary()
+        moveScenrary()
         
-        ball.position = SCNVector3(x: Float(0), y: 2 * sin(t) + 3, z: -3)
         
+        //        ball.physicsBody?.applyForce(force, asImpulse: false)
         self.t += 0.1
+        ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballLevel , z: -3)
+        
+        
+        
+        let randomNumber = randomPercent()
+        switch(randomNumber) {
+        case 97..<97.5:
+            makeObstacles()
+            
+        default:
+          break
+        }
+        
     }
     
-    // MARK: -- Functions
+    func makeObstacles() {
+        
+        var randomGroundPercent : Double  = randomPercent()
+        while CGFloat(randomGroundPercent) >= 100 - (ballRadius*3) / groundWidth {
+            randomGroundPercent  = randomPercent()
+           
+        }
+        
+        let randomPlace = Float(randomGroundPercent/100) * Float(groundWidth) - Float(groundWidth)/2
+        
+        let leftPole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: obstaclesHeight, length: 0.2, chamferRadius: 0.0))
+        leftPole.position = SCNVector3(x: -4.4, y: Float(obstaclesHeight)/2, z: -10)
+        leftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        leftPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        leftPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        let rightPole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: obstaclesHeight, length: 0.2, chamferRadius: 0.0))
+        rightPole.position = SCNVector3(x: +4.4, y: Float(obstaclesHeight)/2, z: -10)
+        rightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        rightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        rightPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        
+        let topPole = SCNNode(geometry: SCNBox(width: 8.8 + obstacleWidth, height: 0.2, length: 0.2, chamferRadius: 0.0))
+        topPole.position = SCNVector3(x: 0, y: Float(obstaclesHeight), z: -10)
+        topPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        topPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        topPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        let topSquareObstaclePole = SCNNode(geometry: SCNBox(width: ( ballRadius * 3) , height: obstacleWidth , length: 0.05, chamferRadius: 0.0))
+        
+        let yObstacleTop : Float = ballLevel + Float(groundHeight)/2 + (Float(ballRadius) * 3 ) - Float(ballRadius)
+        
+        topSquareObstaclePole.position = SCNVector3(x: 0 + randomPlace , y: yObstacleTop, z: -10)
+        topSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        topSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        topSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        let leftSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( ballRadius * 3) , length: 0.05, chamferRadius: 0.0))
+        let yObstacleLeft : Float = ballLevel + Float(groundHeight)/2 + ( Float(ballRadius) * 3) / 2 - Float(ballRadius)
+        leftSquareObstaclePole.position = SCNVector3(x: -Float(ballRadius)*1.5 + randomPlace, y: yObstacleLeft, z: -10)
+        leftSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
+        leftSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
+        leftSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        
+        let node = SCNNode()
+        node.name = "obstacle"
+        node.addChildNode(leftPole)
+        node.addChildNode(rightPole)
+        node.addChildNode(topPole)
+        node.addChildNode(topSquareObstaclePole)
+        node.addChildNode(leftSquareObstaclePole)
+        node.position = SCNVector3(x: 0, y: 0, z: Float(5) * -1 * Float(nodeLength))
+        
+        
+        
+        let scnView = self.view as! SCNView
+        scnView.scene?.rootNode.addChildNode(node)
+        
+        
+        
+    }
     
     func createScenary() {
-        let nodeLength: CGFloat = 20
-        
-        for i in 0..<7 {
-            let ground = SCNNode(geometry: SCNBox(width: 8, height: 0.2, length: nodeLength, chamferRadius: 0.0))
+         
+        for i in 0..<howManyNodes { //7
+            let ground = SCNNode(geometry: SCNBox(width: groundWidth , height: groundHeight, length: nodeLength, chamferRadius: 0.0))
             ground.position = SCNVector3(x: 0, y: 0, z: 0)
             ground.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "floorColor")
             
@@ -100,7 +224,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             let leftPurple = SCNNode(geometry: SCNBox(width: 2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
             leftPurple.position = SCNVector3(x: -6, y: 0, z: 0)
             leftPurple.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralPurple")
-
+            
             let rightGreen = SCNNode(geometry: SCNBox(width: 0.2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
             rightGreen.position = SCNVector3(x: 4.4, y: 0, z: 0)
             rightGreen.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
@@ -113,49 +237,62 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             
             let node = SCNNode()
             node.name = "ground"
+            
             node.addChildNode(ground)
             node.addChildNode(leftGreen)
             node.addChildNode(leftPurple)
             node.addChildNode(rightGreen)
             node.addChildNode(rightPurple)
-            node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -20)
-
-//            let filter = CIFilter(name: "CIGaussianBlur")
-//            filter!.setValue(1, forKey: kCIInputRadiusKey)
-//            left.filters = [filter!]
-//            right.filters = [filter!]
+            node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -1 * Float(nodeLength))
             
-//            let omniLight = SCNLight()
-//            omniLight.type = .omni
-//            omniLight.color = UIColor(named: "lateralBase")
-//            left.light = omniLight
-//            right.light = omniLight
-
+            //            let filter = CIFilter(name: "CIGaussianBlur")
+            //            filter!.setValue(1, forKey: kCIInputRadiusKey)
+            //            left.filters = [filter!]
+            //            right.filters = [filter!]
+            
+            //            let omniLight = SCNLight()
+            //            omniLight.type = .omni
+            //            omniLight.color = UIColor(named: "lateralBase")
+            //            left.light = omniLight
+            //            right.light = omniLight
+            
             let scnView = self.view as! SCNView
             scnView.scene?.rootNode.addChildNode(node)
         }
     }
     
-//    func moveScenrary() {
-//        DispatchQueue.main.async {
-//            let scnView = self.view as! SCNView
-//
-//            let nodes = scnView.scene?.rootNode.childNodes.filter { node in
-//                node.name == "ground"
-//            }
-//
-//            for node in nodes! {
-//                node.position.z += 0.2
-//
-//                if node.position.z > 20 {
-//                    node.position.z -= 120
-//                }
-//            }
-//        }
-//    }
+    func moveScenrary() {
+        DispatchQueue.main.async {
+            let scnView = self.view as! SCNView
+            
+            let nodes = scnView.scene?.rootNode.childNodes.filter { node in
+                node.name == "ground"
+            }
+            
+            for node in nodes! {
+                node.position.z += 0.2
+                
+                if node.position.z > Float(self.nodeLength) {
+                    node.position.z -= Float(self.howManyNodes)*Float(self.nodeLength)
+                }
+            }
+            
+            let nodesObsta = scnView.scene?.rootNode.childNodes.filter { node in
+                node.name == "obstacle"
+            }
+            
+            for node in nodesObsta! {
+                node.position.z += 0.2
+                
+                if node.position.z > Float(self.nodeLength) {
+                    node.removeFromParentNode()
+                }
+            }
+        }
+    }
     
     func createBall() {
-        ball.position = SCNVector3(x: 0, y: 3, z: 0)
+        
         ball.name = "ball"
         ball.geometry?.firstMaterial?.diffuse.contents = UIColor.red
         
@@ -163,18 +300,31 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         //ball.geometry?.firstMaterial?.emission.intensity = 0.5
         
         let scnView = self.view as! SCNView
+        ball.position = SCNVector3(x: Float(0), y:1 , z: -3)
+        
         scnView.scene?.rootNode.addChildNode(ball)
         
-//        let omniLight = SCNLight()
-//        omniLight.type = .omni
-//        omniLight.color = UIColor.red
-//        ball.light = omniLight
+        //        let omniLight = SCNLight()
+        //        omniLight.type = .omni
+        //        omniLight.color = UIColor.red
+        //        ball.light = omniLight
     }
     
+    func createTimer(){
+        let timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(runTimer), userInfo: nil, repeats: true)
+                
+                label.textColor = .white
+                label.font = UIFont(name: "Arial", size: 30)
+                label.text = "Score: \(self.somaTimer)"
+                label.frame = CGRect(x: 40, y: 20, width: 250, height: 50)
+       
+        let scnView = self.view as! SCNView
+        scnView.addSubview(label)
+    }
     // MARK: -- Configurations
     
     override var shouldAutorotate: Bool {
-        return false
+        return true
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -182,10 +332,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
-        }
+        return .landscape
     }
 }
