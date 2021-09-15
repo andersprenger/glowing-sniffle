@@ -93,41 +93,35 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         
         makeObstacles()
-        
     }
     
-   
+    
     func userCommand(){
         
         if motionManager.isDeviceMotionAvailable{
             motionManager.deviceMotionUpdateInterval = updateRate
-            motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main){
-                (data, error) in
+            motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main){ (data, error) in
                 guard let validData = data else{return}
                 
                 self.yaw = validData.attitude.pitch*58
-                            
             }
-            
         }
-        
-        
-        
     }
+    
     func randomPercent() -> Double {
-      return Double(arc4random() % 1000) / 10.0;
+        return Double(arc4random() % 1000) / 10.0;
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         moveScenrary()
         
         
-//        ball.physicsBody?.applyForce(force, asImpulse: false)
+        //        ball.physicsBody?.applyForce(force, asImpulse: false)
         self.t += 0.1
         ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballLevel , z: -3)
         
         
-
+        
         let randomNumber = randomPercent()
         switch(randomNumber) {
         case 97..<97.5:
@@ -139,12 +133,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
     }
     
-
-    
-    
-    
-    
-    func makeObstacles(){
+    func makeObstacles() {
         
         var randomGroundPercent : Double  = randomPercent()
         while CGFloat(randomGroundPercent) >= 100 - (ballRadius*3) / groundWidth {
@@ -260,7 +249,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             let leftPurple = SCNNode(geometry: SCNBox(width: 2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
             leftPurple.position = SCNVector3(x: -6, y: 0, z: 0)
             leftPurple.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralPurple")
-
+            
             let rightGreen = SCNNode(geometry: SCNBox(width: 0.2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
             rightGreen.position = SCNVector3(x: 4.4, y: 0, z: 0)
             rightGreen.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
@@ -274,6 +263,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             let node = SCNNode()
             node.name = "ground"
             
+<<<<<<< HEAD
             let bhheight: Float = 0.08
             
             let blackHoleImage = SCNNode(geometry: SCNCylinder(radius: 1.0, height: 0.2))
@@ -305,6 +295,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             blackHole.addChildNode(blackHoleRing3)
             blackHole.name = "blackHole"
             
+=======
+>>>>>>> anderson
             node.addChildNode(ground)
             node.addChildNode(leftGreen)
             node.addChildNode(leftPurple)
@@ -312,18 +304,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             node.addChildNode(rightPurple)
             node.addChildNode(blackHole)
             node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -1 * Float(nodeLength))
-
-//            let filter = CIFilter(name: "CIGaussianBlur")
-//            filter!.setValue(1, forKey: kCIInputRadiusKey)
-//            left.filters = [filter!]
-//            right.filters = [filter!]
             
-//            let omniLight = SCNLight()
-//            omniLight.type = .omni
-//            omniLight.color = UIColor(named: "lateralBase")
-//            left.light = omniLight
-//            right.light = omniLight
-
+            //            let filter = CIFilter(name: "CIGaussianBlur")
+            //            filter!.setValue(1, forKey: kCIInputRadiusKey)
+            //            left.filters = [filter!]
+            //            right.filters = [filter!]
+            
+            //            let omniLight = SCNLight()
+            //            omniLight.type = .omni
+            //            omniLight.color = UIColor(named: "lateralBase")
+            //            left.light = omniLight
+            //            right.light = omniLight
+            
             let scnView = self.view as! SCNView
             scnView.scene?.rootNode.addChildNode(node)
         }
@@ -332,14 +324,14 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     func moveScenrary() {
         DispatchQueue.main.async {
             let scnView = self.view as! SCNView
-
+            
             let nodes = scnView.scene?.rootNode.childNodes.filter { node in
                 node.name == "ground"
             }
-
+            
             for node in nodes! {
                 node.position.z += 0.2
-
+                
                 if node.position.z > Float(self.nodeLength) {
                     node.position.z -= Float(self.howManyNodes)*Float(self.nodeLength)
                 }
@@ -355,10 +347,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
                 if node.position.z > Float(self.nodeLength) {
                     node.removeFromParentNode()
                 }
-                
             }
-            
-            
         }
     }
     
@@ -375,11 +364,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         scnView.scene?.rootNode.addChildNode(ball)
         
-        
-//        let omniLight = SCNLight()
-//        omniLight.type = .omni
-//        omniLight.color = UIColor.red
-//        ball.light = omniLight
+        //        let omniLight = SCNLight()
+        //        omniLight.type = .omni
+        //        omniLight.color = UIColor.red
+        //        ball.light = omniLight
     }
     
     // MARK: -- Configurations
@@ -393,10 +381,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .landscape
-        } else {
-            return .all
-        }
+        return .landscape
     }
 }
