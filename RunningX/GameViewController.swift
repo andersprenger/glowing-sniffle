@@ -291,11 +291,46 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             let node = SCNNode()
             node.name = "ground"
             
+<<<<<<< HEAD
+            let bhheight: Float = 0.08
+            
+            let blackHoleImage = SCNNode(geometry: SCNCylinder(radius: 1.0, height: 0.2))
+            blackHoleImage.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "blsckholebg2")
+            blackHoleImage.position = SCNVector3(0, 0.001, 0)
+            
+            let blackHoleRing1 = SCNNode(geometry: SCNTorus(ringRadius: 1.1, pipeRadius: 0.025))
+            blackHoleRing1.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "blackHoleRing1Color")
+            blackHoleRing1.geometry?.firstMaterial?.emission.contents = UIColor(named: "blackHoleRing1Color")
+            blackHoleRing1.geometry?.firstMaterial?.emission.intensity = 0.5
+            blackHoleRing1.position = SCNVector3(0, bhheight, 0)
+            
+            let blackHoleRing2 = SCNNode(geometry: SCNTorus(ringRadius: 1.25, pipeRadius: 0.025))
+            blackHoleRing2.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "blackHoleRing2Color")
+            blackHoleRing2.geometry?.firstMaterial?.emission.contents = UIColor(named: "blackHoleRing2Color")
+            blackHoleRing2.geometry?.firstMaterial?.emission.intensity = 0.5
+            blackHoleRing2.position = SCNVector3(0, bhheight, 0)
+            
+            let blackHoleRing3 = SCNNode(geometry: SCNTorus(ringRadius: 1.45, pipeRadius: 0.1))
+            blackHoleRing3.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "blackHoleRing3Color")
+            blackHoleRing3.geometry?.firstMaterial?.emission.contents = UIColor(named: "blackHoleRing3Color")
+            blackHoleRing3.geometry?.firstMaterial?.emission.intensity = 0.5
+            blackHoleRing3.position = SCNVector3(0, bhheight, 0)
+
+            let blackHole = SCNNode()
+            blackHole.addChildNode(blackHoleImage)
+            blackHole.addChildNode(blackHoleRing1)
+            blackHole.addChildNode(blackHoleRing2)
+            blackHole.addChildNode(blackHoleRing3)
+            blackHole.name = "blackHole"
+            
+=======
+>>>>>>> anderson
             node.addChildNode(ground)
             node.addChildNode(leftGreen)
             node.addChildNode(leftPurple)
             node.addChildNode(rightGreen)
             node.addChildNode(rightPurple)
+            node.addChildNode(blackHole)
             node.position = SCNVector3(x: 0, y: 0, z: Float(i) * -1 * Float(nodeLength))
             
             //            let filter = CIFilter(name: "CIGaussianBlur")
