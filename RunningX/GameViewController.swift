@@ -247,7 +247,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         node.addChildNode(leftSquareObstaclePole)
         node.addChildNode(rightSquareObstaclePole)
         
-        //node.addChildNode(downLeftPole)
+        node.addChildNode(downLeftPole)
         node.addChildNode(downRightPole)
         node.position = SCNVector3(x: 0, y: 0, z: Float(5) * -1 * Float(nodeLength))
         
