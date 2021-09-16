@@ -13,6 +13,7 @@
 		713F67EA26EA4BBD000223E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 713F67E926EA4BBD000223E1 /* Assets.xcassets */; };
 		716C79AB26F2BFE5008025B9 /* sky_animation_2.mov in Resources */ = {isa = PBXBuildFile; fileRef = 716C79AA26F2BFE5008025B9 /* sky_animation_2.mov */; };
 		716C79AD26F2C156008025B9 /* music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 716C79AC26F2C156008025B9 /* music.mp3 */; };
+		B19CA37E26F3B81600CE0706 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B19CA37D26F3B81600CE0706 /* StartViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		713F67EB26EA4BBD000223E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		716C79AA26F2BFE5008025B9 /* sky_animation_2.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = sky_animation_2.mov; sourceTree = "<group>"; };
 		716C79AC26F2C156008025B9 /* music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music.mp3; sourceTree = "<group>"; };
+		B19CA37D26F3B81600CE0706 /* StartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 		713F67DF26EA4BBD000223E1 /* RunningX */ = {
 			isa = PBXGroup;
 			children = (
+				B19CA37D26F3B81600CE0706 /* StartViewController.swift */,
 				713F67E026EA4BBD000223E1 /* AppDelegate.swift */,
 				713F67E426EA4BBD000223E1 /* GameViewController.swift */,
 				713F67E626EA4BBD000223E1 /* Main.storyboard */,
@@ -140,6 +143,7 @@
 			files = (
 				713F67E526EA4BBD000223E1 /* GameViewController.swift in Sources */,
 				713F67E126EA4BBD000223E1 /* AppDelegate.swift in Sources */,
+				B19CA37E26F3B81600CE0706 /* StartViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,7 +283,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = M7DG8QRAF9;
+				DEVELOPMENT_TEAM = LTT64UC4XT;
 				INFOPLIST_FILE = RunningX/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -298,7 +302,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = M7DG8QRAF9;
+				DEVELOPMENT_TEAM = LTT64UC4XT;
 				INFOPLIST_FILE = RunningX/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
