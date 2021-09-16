@@ -233,11 +233,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         
         
-        let leftDownPoleWidth : CGFloat = groundWidth * CGFloat(randomGroundPercent)/100 - (obstacleWidth)//- 0.2
-        let leftDownPoleXPosition : Float =   ( -Float(groundWidth)/2 + xLeftlitleSquarePosition) / 2 - Float(obstacleWidth) //- 0.2 + 0.05
+        let leftDownPoleWidth : CGFloat = groundWidth * CGFloat(randomGroundPercent)/100 - (obstacleWidth) - 0.1
+        let leftDownPoleXPosition : Float =   ( -Float(groundWidth)/2 + xLeftlitleSquarePosition) / 2 - Float(obstacleWidth) - 0.1
         
         
-        let rightDownPoleWidth : CGFloat = groundWidth - leftDownPoleWidth //- 0.2
+        let rightDownPoleWidth : CGFloat = groundWidth - leftDownPoleWidth - 0.35
         let rightDownPoleXPosition : Float = rightSquareObstaclePole.position.x + (Float(rightDownPoleWidth) / 2) - Float(obstacleWidth)/2
         
         
