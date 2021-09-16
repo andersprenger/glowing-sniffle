@@ -9,10 +9,14 @@ import UIKit
 import QuartzCore
 import SceneKit
 import CoreMotion
+import AVFoundation
 
 public let label = UILabel()
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
+    // bg player
+    var videoURL : URL! = nil
+    var videoPlayer : AVPlayer! = nil
     
     // ball
     private let ballRadius : CGFloat = 0.3
@@ -27,13 +31,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         return somaTimer
     }
     
-    
     // general vars
     private var t: Float = 0
     var motionManager = CMMotionManager()
     var updateRate : Double = 1/60
     var yaw : Double = 0
-    
     
     // ground
     let nodeLength: CGFloat = 20
@@ -44,7 +46,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     let obstaclesHeight : CGFloat = 4.5
     let obstacleWidth : CGFloat = 0.1
     let totalTopObstacleSize : CGFloat = 8.8 + 0.1 // tamanho do chao + obstacle width + um pouco pra fora
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,18 +89,28 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
         
+        // init bg player
+        self.videoURL = Bundle.main.url(forResource: "sky_animation_2", withExtension: "mov")!
+        self.videoPlayer = AVPlayer(url: videoURL)
+        
         // configure the view
         scnView.backgroundColor = UIColor.black
-        scene.background.contents = UIImage(named: "fundoTeste")
+        scene.background.contents = videoPlayer
         scene.background.wrapS = .repeat
         scene.background.wrapT = .repeat
+        
+        videoPlayer.play()
+        
+        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: self.videoPlayer.currentItem, queue: .main) { [weak self] _ in
+            self?.videoPlayer?.seek(to: CMTime.zero)
+            self?.videoPlayer?.play()
+        }
         
         // set itself as delegate
         scnView.delegate = self
         
         // init functions
         createScenary()
-        
         createBall()
         createTimer()
         userCommand()
