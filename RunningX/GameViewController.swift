@@ -18,6 +18,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     var videoURL : URL! = nil
     var videoPlayer : AVPlayer! = nil
     
+    //music
+    var audioPlayer: AVAudioPlayer! = nil
+
     // ball
     private let ballRadius : CGFloat = 0.3
     var ball : SCNNode  = SCNNode()
@@ -114,11 +117,21 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         createBall()
         createTimer()
         userCommand()
+        playMusic()
     }
     
+    // MARK: -- Update
+    
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        moveScenrary()
+        
+        self.t += 0.1
+        ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballLevel , z: -3)
+    }
+    
+    // MARK: -- Functions
     
     func userCommand(){
-        
         if motionManager.isDeviceMotionAvailable{
             motionManager.deviceMotionUpdateInterval = updateRate
             motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main){ (data, error) in
@@ -133,11 +146,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         return Double(arc4random() % 1000) / 10.0;
     }
     
-    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
-        moveScenrary()
-        
-        self.t += 0.1
-        ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballLevel , z: -3)
+    func playMusic() {
+        if let url = Bundle.main.url(forResource: "music", withExtension: "mp3") {
+            do {
+                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.duckOthers])
+                try AVAudioSession.sharedInstance().setActive(true)
+                
+                self.audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.wav.rawValue)
+                
+                guard let player = self.audioPlayer else { return }
+                player.volume = 0.2
+                player.numberOfLoops = -1
+                player.prepareToPlay()
+                player.play()
+                
+            } catch _ { return }
+        }
     }
     
     func makeObstacles() -> SCNNode {
@@ -416,7 +440,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let scnView = self.view as! SCNView
         scnView.addSubview(label)
     }
-    // MARK: -- Configurations
+    // MARK: -- Settings
     
     override var shouldAutorotate: Bool {
         return true

@@ -12,6 +12,7 @@
 		713F67E826EA4BBD000223E1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 713F67E626EA4BBD000223E1 /* Main.storyboard */; };
 		713F67EA26EA4BBD000223E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 713F67E926EA4BBD000223E1 /* Assets.xcassets */; };
 		716C79AB26F2BFE5008025B9 /* sky_animation_2.mov in Resources */ = {isa = PBXBuildFile; fileRef = 716C79AA26F2BFE5008025B9 /* sky_animation_2.mov */; };
+		716C79AD26F2C156008025B9 /* music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 716C79AC26F2C156008025B9 /* music.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		713F67E926EA4BBD000223E1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		713F67EB26EA4BBD000223E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		716C79AA26F2BFE5008025B9 /* sky_animation_2.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = sky_animation_2.mov; sourceTree = "<group>"; };
+		716C79AC26F2C156008025B9 /* music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				713F67E626EA4BBD000223E1 /* Main.storyboard */,
 				713F67E926EA4BBD000223E1 /* Assets.xcassets */,
 				716C79AA26F2BFE5008025B9 /* sky_animation_2.mov */,
+				716C79AC26F2C156008025B9 /* music.mp3 */,
 				713F67EB26EA4BBD000223E1 /* Info.plist */,
 			);
 			path = RunningX;
@@ -121,6 +124,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				716C79AD26F2C156008025B9 /* music.mp3 in Resources */,
 				713F67EA26EA4BBD000223E1 /* Assets.xcassets in Resources */,
 				713F67E826EA4BBD000223E1 /* Main.storyboard in Resources */,
 				716C79AB26F2BFE5008025B9 /* sky_animation_2.mov in Resources */,
