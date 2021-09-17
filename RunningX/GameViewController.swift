@@ -142,9 +142,10 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     }
     
     // MARK: -- Functions
+    var perdeu : Int = 0
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
-        
-        print("EAI GENTEM")
+        perdeu += 1
+        print("PERDEU PLAYBOY \(perdeu)")
         
         
     }
@@ -273,7 +274,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         downLeftPole.name = "baixo"
         
         
-        let downLeftPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width:  leftDownPoleWidth, height: 20, length: 20, chamferRadius: 0.0), options: nil))
+        let downLeftPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width:  leftDownPoleWidth , height: 0.2, length: 0.2, chamferRadius: 0.0), options: nil))
         
         downLeftPoleBody.categoryBitMask = 00000010
         
@@ -293,7 +294,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
         downRightPole.name = "baixo"
         
-        let downRightPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width:  leftDownPoleWidth, height: 20, length: 20, chamferRadius: 0.0), options: nil))
+        let downRightPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width: rightDownPoleWidth , height: obstacleWidth , length: 0.2, chamferRadius: 0.0), options: nil))
         
         downRightPoleBody.categoryBitMask = 00000010
        // downRightPoleBody.contactTestBitMask = ballCategory
@@ -440,8 +441,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
         return blackHole
     }
-    
-   
     
     func moveScenrary() {
         DispatchQueue.main.async {
