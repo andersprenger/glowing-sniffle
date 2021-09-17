@@ -13,7 +13,7 @@ import AVFoundation
 
 public let label = UILabel()
 
-class GameViewController: UIViewController, SCNSceneRendererDelegate {
+class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysicsContactDelegate {
     // bg player
     var videoURL : URL! = nil
     var videoPlayer : AVPlayer! = nil
@@ -25,6 +25,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     private let ballRadius : CGFloat = 0.3
     var ball : SCNNode  = SCNNode()
     var ballLevel : Float = 0.2 / 2 + 0.3
+    var ballCategory : Int = 1 << 0
     
     // timer
     public var somaTimer = 0
@@ -40,6 +41,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     var updateRate : Double = 1/60
     var yaw : Double = 0
     
+    
+    
     // ground
     let nodeLength: CGFloat = 20
     let howManyNodes : Int = 7
@@ -49,6 +52,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     let obstaclesHeight : CGFloat = 4.5
     let obstacleWidth : CGFloat = 0.1
     let totalTopObstacleSize : CGFloat = 8.8 + 0.1 // tamanho do chao + obstacle width + um pouco pra fora
+    let obstaclesCategory : Int = 1 << 1
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,7 +88,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
-        
+        scnView.debugOptions = .showPhysicsShapes
         // set the scene to the view
         scnView.scene = scene
         
@@ -111,13 +117,16 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         // set itself as delegate
         scnView.delegate = self
+   
+        scnView.scene?.physicsWorld.contactDelegate = self
+        
         
         // init functions
         createScenary()
         createBall()
         createTimer()
         userCommand()
-        playMusic()
+        //playMusic()
     }
     
     // MARK: -- Update
@@ -127,9 +136,19 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         self.t += 0.1
         ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballLevel , z: -3)
+        
+        
+        
     }
     
     // MARK: -- Functions
+    func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
+        
+        print("EAI GENTEM")
+        
+        
+    }
+    
     
     func userCommand(){
         if motionManager.isDeviceMotionAvailable{
@@ -221,6 +240,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
         
+        
+        
         let rightSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( squareSide) , length: 0.05, chamferRadius: 0.0))
         let yObstacleRight : Float = ballLevel + Float(groundHeight)/2 +  Float(squareSide) / 2 - Float(ballRadius)
         
@@ -243,18 +264,44 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         // down poles
         
-        let downLeftPole = SCNNode(geometry: SCNBox(width:  leftDownPoleWidth, height: 0.2, length: 0.2, chamferRadius: 0.0))
+        let downLeftPole = SCNNode(geometry: SCNBox(width:  leftDownPoleWidth , height: 0.2, length: 0.2, chamferRadius: 0.0))
         downLeftPole.position = SCNVector3(x: leftDownPoleXPosition , y:  yObstacleRight - ( Float(squareSide) / 2 ) , z: -10)
         downLeftPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         downLeftPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         downLeftPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
+        downLeftPole.name = "baixo"
         
+        
+        let downLeftPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width:  leftDownPoleWidth, height: 20, length: 20, chamferRadius: 0.0), options: nil))
+        
+        downLeftPoleBody.categoryBitMask = 00000010
+        
+       // downLeftPoleBody.contactTestBitMask = ballCategory
+        
+//        downLeftPoleBody.isAffectedByGravity = false
+
+        downLeftPole.physicsBody = downLeftPoleBody
+        
+    
         let downRightPole = SCNNode(geometry: SCNBox(width: rightDownPoleWidth , height: obstacleWidth , length: 0.2, chamferRadius: 0.0))
         downRightPole.position = SCNVector3(x: rightDownPoleXPosition, y: yObstacleRight - ( Float(squareSide) / 2 ) , z: -10)
         downRightPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         downRightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         downRightPole.geometry?.firstMaterial?.emission.intensity = 0.5
+        
+        
+        downRightPole.name = "baixo"
+        
+        let downRightPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width:  leftDownPoleWidth, height: 20, length: 20, chamferRadius: 0.0), options: nil))
+        
+        downRightPoleBody.categoryBitMask = 00000010
+       // downRightPoleBody.contactTestBitMask = ballCategory
+        
+//        downRightPoleBody.isAffectedByGravity = false
+
+        downRightPole.physicsBody = downRightPoleBody
+
         
         
         let node = SCNNode()
@@ -280,6 +327,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
                 ground.position = SCNVector3(x: 0, y: 0, z: 0)
                 ground.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "floorColor")
                 
+                
+                
+                
+                
+                
                 let leftGreen = SCNNode(geometry: SCNBox(width: 0.2, height: 0.2, length: nodeLength, chamferRadius: 0.0))
                 leftGreen.position = SCNVector3(x: -4.4, y: 0, z: 0)
                 leftGreen.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
@@ -300,8 +352,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
                 rightPurple.position = SCNVector3(x: 6, y: 0, z: 0)
                 rightPurple.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "lateralPurple")
                 
+                
+                
+                
                 let node = SCNNode()
                 node.name = "ground"
+                
+                
+//                let groundBody = SCNPhysicsBody(type: .static, shape:SCNPhysicsShape(geometry:  SCNBox(width: groundWidth , height: groundHeight, length: nodeLength, chamferRadius: 0.0), options: nil))
+//
+//                groundBody.categoryBitMask = 00000010
+//               // downRightPoleBody.contactTestBitMask = ballCategory
+//
+//        //        downRightPoleBody.isAffectedByGravity = false
+//
+//                node.physicsBody = groundBody
+                
                 
                 node.addChildNode(ground)
                 node.addChildNode(leftGreen)
@@ -375,16 +441,30 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         return blackHole
     }
     
+   
+    
     func moveScenrary() {
         DispatchQueue.main.async {
             let scnView = self.view as! SCNView
             
             let nodes = scnView.scene?.rootNode.childNodes.filter { node in
+               
                 node.name == "ground"
             }
+         let physicsNodes =  scnView.scene?.rootNode.childNodes(passingTest: { node, _ in
+                node.physicsBody != nil
+            })
+            physicsNodes?.forEach({ node in
+                node.physicsBody?.resetTransform()
+            })
+            
+            
             
             for node in nodes! {
+                
                 node.position.z += 0.2
+                
+            
                 
                 if node.position.z > Float(self.nodeLength) {
                     node.position.z -= Float(self.howManyNodes)*Float(self.nodeLength)
@@ -418,15 +498,21 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         ball.geometry?.firstMaterial?.emission.contents = UIColor.red
         //ball.geometry?.firstMaterial?.emission.intensity = 0.5
         
+        
+        
+        let body = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNSphere(radius: ballRadius), options: nil))
+        body.categoryBitMask = 00000001
+        body.contactTestBitMask = 00000011
+        ball.physicsBody = body
+//        ball.physicsBody?.isAffectedByGravity = false
+        
+        
         let scnView = self.view as! SCNView
         ball.position = SCNVector3(x: Float(0), y:1 , z: -3)
         
         scnView.scene?.rootNode.addChildNode(ball)
         
-        //        let omniLight = SCNLight()
-        //        omniLight.type = .omni
-        //        omniLight.color = UIColor.red
-        //        ball.light = omniLight
+        
     }
     
     func createTimer(){
