@@ -14,12 +14,8 @@ import AVFoundation
 public let label = UILabel()
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
-    // bg player
-    var videoURL: URL! = nil
-    var videoPlayer: AVPlayer! = nil
-    
-    //music
-    var audioPlayer: AVAudioPlayer! = nil
+    //media
+    var mediaPlayer: MediaPlayer = MediaPlayer()
 
     // ball
     var ball: SCNNode!
@@ -46,8 +42,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        ball = SCNNode(geometry: SCNSphere(radius: ballRadius))
-        //ballLevel = Float(groundHeight) / 2 + Float(ballRadius)
+        
         // create a new scene
         let scene = SCNScene()
         
@@ -86,22 +81,15 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         // show statistics such as fps and timing information
         scnView.showsStatistics = true
         
-        // init bg player
-        self.videoURL = Bundle.main.url(forResource: "sky_animation_2", withExtension: "mov")!
-        self.videoPlayer = AVPlayer(url: videoURL)
+        // init media stuff
+        mediaPlayer.playMusic()
+        mediaPlayer.playVideo()
         
         // configure the view
         scnView.backgroundColor = UIColor.black
-        scene.background.contents = videoPlayer
+        scene.background.contents = mediaPlayer.videoPlayer
         scene.background.wrapS = .repeat
         scene.background.wrapT = .repeat
-        
-        videoPlayer.play()
-        
-        NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: self.videoPlayer.currentItem, queue: .main) { [weak self] _ in
-            self?.videoPlayer?.seek(to: CMTime.zero)
-            self?.videoPlayer?.play()
-        }
         
         // set itself as delegate
         scnView.delegate = self
@@ -151,24 +139,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
     func randomPercent() -> Double {
         return Double(arc4random() % 1000) / 10.0;
-    }
-    
-    func playMusic() {
-        if let url = Bundle.main.url(forResource: "music", withExtension: "mp3") {
-            do {
-                try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [.duckOthers])
-                try AVAudioSession.sharedInstance().setActive(true)
-                
-                self.audioPlayer = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.wav.rawValue)
-                
-                guard let player = self.audioPlayer else { return }
-                player.volume = 0.2
-                player.numberOfLoops = -1
-                player.prepareToPlay()
-                player.play()
-                
-            } catch _ { return }
-        }
     }
     
     func makeObstacles() -> SCNNode {

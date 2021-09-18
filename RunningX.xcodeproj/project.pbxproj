@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		713196E926F59CDA00363094 /* BallFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713196E826F59CDA00363094 /* BallFactory.swift */; };
 		713196EB26F5A57600363094 /* ScenaryFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713196EA26F5A57600363094 /* ScenaryFactory.swift */; };
+		713196EE26F5A93700363094 /* MediaPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713196ED26F5A93700363094 /* MediaPlayer.swift */; };
 		713F67E126EA4BBD000223E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713F67E026EA4BBD000223E1 /* AppDelegate.swift */; };
 		713F67E526EA4BBD000223E1 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 713F67E426EA4BBD000223E1 /* GameViewController.swift */; };
 		713F67E826EA4BBD000223E1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 713F67E626EA4BBD000223E1 /* Main.storyboard */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		713196E826F59CDA00363094 /* BallFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallFactory.swift; sourceTree = "<group>"; };
 		713196EA26F5A57600363094 /* ScenaryFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenaryFactory.swift; sourceTree = "<group>"; };
+		713196ED26F5A93700363094 /* MediaPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayer.swift; sourceTree = "<group>"; };
 		713F67DD26EA4BBD000223E1 /* RunningX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunningX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		713F67E026EA4BBD000223E1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		713F67E426EA4BBD000223E1 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -62,6 +64,14 @@
 			path = Factory;
 			sourceTree = "<group>";
 		};
+		713196EC26F5A92600363094 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				713196ED26F5A93700363094 /* MediaPlayer.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		713F67D426EA4BBD000223E1 = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +93,7 @@
 			children = (
 				B19CA37D26F3B81600CE0706 /* StartViewController.swift */,
 				713F67E026EA4BBD000223E1 /* AppDelegate.swift */,
+				713196EC26F5A92600363094 /* Helpers */,
 				713196E726F59CC500363094 /* Factory */,
 				713F67E426EA4BBD000223E1 /* GameViewController.swift */,
 				713F67E626EA4BBD000223E1 /* Main.storyboard */,
@@ -165,6 +176,7 @@
 			files = (
 				713F67E526EA4BBD000223E1 /* GameViewController.swift in Sources */,
 				713F67E126EA4BBD000223E1 /* AppDelegate.swift in Sources */,
+				713196EE26F5A93700363094 /* MediaPlayer.swift in Sources */,
 				713196EB26F5A57600363094 /* ScenaryFactory.swift in Sources */,
 				B19CA37E26F3B81600CE0706 /* StartViewController.swift in Sources */,
 				713196E926F59CDA00363094 /* BallFactory.swift in Sources */,
