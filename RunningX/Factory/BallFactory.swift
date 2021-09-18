@@ -11,6 +11,7 @@ import SceneKit
 struct BallFactory {
     static let name: String = "ball"
     static let ballRadius: Float = 0.3
+    static let ballHeight: Float = 0.2 / 2 + 0.3
 
     static func createBall(completionHandler: (_ ball: SCNNode) -> ()) {
         let ball = SCNNode(geometry: SCNSphere(radius: CGFloat(ballRadius)))
