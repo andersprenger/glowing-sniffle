@@ -15,45 +15,39 @@ public let label = UILabel()
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate {
     // bg player
-    var videoURL : URL! = nil
-    var videoPlayer : AVPlayer! = nil
+    var videoURL: URL! = nil
+    var videoPlayer: AVPlayer! = nil
     
     //music
     var audioPlayer: AVAudioPlayer! = nil
 
     // ball
-    private let ballRadius : CGFloat = 0.3
-    var ball : SCNNode  = SCNNode()
-    var ballLevel : Float = 0.2 / 2 + 0.3
+    var ball: SCNNode!
+    var ballHeight: Float = 0.2 / 2 + 0.3
     
     // timer
     public var somaTimer = 0
-    @objc func runTimer() -> Int {
-        somaTimer += 1
-        label.text = "Score: \(self.somaTimer)"
-        return somaTimer
-    }
     
     // general vars
     private var t: Float = 0
     var motionManager = CMMotionManager()
-    var updateRate : Double = 1/60
-    var yaw : Double = 0
+    var updateRate: Double = 1/60
+    var yaw: Double = 0
     
     // ground
     let nodeLength: CGFloat = 20
-    let howManyNodes : Int = 7
-    let groundHeight : CGFloat = 0.2
-    let groundWidth : CGFloat = 8
+    let howManyNodes: Int = 7
+    let groundHeight: CGFloat = 0.2
+    let groundWidth: CGFloat = 8
     // obstacles
-    let obstaclesHeight : CGFloat = 4.5
-    let obstacleWidth : CGFloat = 0.1
-    let totalTopObstacleSize : CGFloat = 8.8 + 0.1 // tamanho do chao + obstacle width + um pouco pra fora
+    let obstaclesHeight: CGFloat = 4.5
+    let obstacleWidth: CGFloat = 0.1
+    let totalTopObstacleSize: CGFloat = 8.8 + 0.1 // tamanho do chao + obstacle width + um pouco pra fora
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        ball = SCNNode(geometry: SCNSphere(radius: ballRadius))
-        ballLevel = Float(groundHeight) / 2 + Float(ballRadius)
+//        ball = SCNNode(geometry: SCNSphere(radius: ballRadius))
+        //ballLevel = Float(groundHeight) / 2 + Float(ballRadius)
         // create a new scene
         let scene = SCNScene()
         
@@ -63,7 +57,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         scene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: Float(ballRadius) * 5 + ballLevel , z: 0)
+        cameraNode.position = SCNVector3(x: 0, y: 2, z: 0)
         cameraNode.eulerAngles.x = -1/6
         
         // create and add a light to the scene
@@ -112,12 +106,16 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         // set itself as delegate
         scnView.delegate = self
         
+        BallFactory.createBall { ball in
+            self.ball = ball
+            scnView.scene?.rootNode.addChildNode(ball)
+        }
+        
         // init functions
         createScenary()
-        createBall()
         createTimer()
         userCommand()
-        playMusic()
+        //playMusic()
     }
     
     // MARK: -- Update
@@ -126,7 +124,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         moveScenrary()
         
         self.t += 0.1
-        ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballLevel , z: -3)
+        ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballHeight , z: -3)
     }
     
     // MARK: -- Functions
@@ -140,6 +138,12 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
                 self.yaw = validData.attitude.pitch*58
             }
         }
+    }
+    
+    @objc func runTimer() -> Int {
+        somaTimer += 1
+        label.text = "Score: \(self.somaTimer)"
+        return somaTimer
     }
     
     func randomPercent() -> Double {
@@ -167,7 +171,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     func makeObstacles() -> SCNNode {
         
         var randomGroundPercent : Double  = randomPercent()
-        let squareSide : CGFloat =  ballRadius * 4.5
+        let squareSide : CGFloat =  CGFloat(BallFactory.ballRadius * 4.5)
         
         while CGFloat(randomGroundPercent) >= 100 - (squareSide) / groundWidth {
             randomGroundPercent  = randomPercent()
@@ -197,16 +201,12 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         topPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         topPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         topPole.geometry?.firstMaterial?.emission.intensity = 0.5
-        
-        
-        
+
         // litleSquareObstacle
-        
-        
-        
+
         let topSquareObstaclePole = SCNNode(geometry: SCNBox(width: (squareSide) + obstacleWidth   , height: obstacleWidth , length: 0.05, chamferRadius: 0.0))
         
-        let yObstacleTop : Float = ballLevel + Float(groundHeight)/2 + (Float(squareSide) ) - Float(ballRadius)
+        let yObstacleTop : Float = ballHeight + Float(groundHeight)/2 + (Float(squareSide) ) - Float(BallFactory.ballRadius)
         
         topSquareObstaclePole.position = SCNVector3(x: 0 + randomPlace , y: yObstacleTop, z: -10)
         topSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
@@ -214,7 +214,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         topSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
         
         let leftSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( squareSide) , length: 0.05, chamferRadius: 0.0))
-        let yObstacleLeft : Float = ballLevel + Float(groundHeight)/2 +  Float(squareSide) / 2 - Float(ballRadius)
+        let yObstacleLeft : Float = ballHeight + Float(groundHeight)/2 +  Float(squareSide) / 2 - Float(BallFactory.ballRadius)
         let xLeftlitleSquarePosition = -Float(squareSide / 2) + randomPlace
         leftSquareObstaclePole.position = SCNVector3(x: xLeftlitleSquarePosition , y: yObstacleLeft, z: -10)
         leftSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
@@ -222,7 +222,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
         
         let rightSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( squareSide) , length: 0.05, chamferRadius: 0.0))
-        let yObstacleRight : Float = ballLevel + Float(groundHeight)/2 +  Float(squareSide) / 2 - Float(ballRadius)
+        let yObstacleRight : Float = ballHeight + Float(groundHeight)/2 +  Float(squareSide) / 2 - Float(BallFactory.ballRadius)
         
         rightSquareObstaclePole.position = SCNVector3(x: Float(squareSide / 2) + randomPlace, y: yObstacleRight, z: -10)
         rightSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
@@ -329,7 +329,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
     func randomPosition() -> Float {
         var randomGroundPercent : Double  = randomPercent()
-        let squareSide : CGFloat =  ballRadius * 4.5
+        let squareSide : CGFloat =  CGFloat(BallFactory.ballRadius * 4.5)
         
         while CGFloat(randomGroundPercent) >= 100 - (squareSide) / groundWidth {
             randomGroundPercent  = randomPercent()
@@ -408,25 +408,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
                 }
             }
         }
-    }
-    
-    func createBall() {
-        
-        ball.name = "ball"
-        ball.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-        
-        ball.geometry?.firstMaterial?.emission.contents = UIColor.red
-        //ball.geometry?.firstMaterial?.emission.intensity = 0.5
-        
-        let scnView = self.view as! SCNView
-        ball.position = SCNVector3(x: Float(0), y:1 , z: -3)
-        
-        scnView.scene?.rootNode.addChildNode(ball)
-        
-        //        let omniLight = SCNLight()
-        //        omniLight.type = .omni
-        //        omniLight.color = UIColor.red
-        //        ball.light = omniLight
     }
     
     func createTimer(){
