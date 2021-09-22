@@ -20,6 +20,11 @@ struct BallFactory {
         ball.geometry?.firstMaterial?.diffuse.contents = UIColor.red
         ball.geometry?.firstMaterial?.emission.contents = UIColor.red
 
+        let body = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(ballRadius)), options: nil))
+        body.categoryBitMask = 00000001
+        body.contactTestBitMask = 00000011
+        ball.physicsBody = body
+        
         completionHandler(ball)
     }
 }

@@ -12,10 +12,10 @@ import CoreMotion
 
 public let label = UILabel()
 
-class GameViewController: UIViewController, SCNSceneRendererDelegate {
+class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysicsContactDelegate {
     //media
     var mediaPlayer: MediaPlayer = MediaPlayer()
-
+    
     // ball
     var ball: SCNNode!
     
@@ -80,19 +80,26 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         // set itself as delegate
         scnView.delegate = self
+        scnView.scene?.physicsWorld.contactDelegate = self
         
+        // init functions
         BallFactory.createBall { ball in
             self.ball = ball
             scnView.scene?.rootNode.addChildNode(ball)
         }
         
-        // init functions
         ScenaryFactory.createScenary { node in
             scnView.scene?.rootNode.addChildNode(node)
         }
         
         createTimer()
         startControl()
+    }
+    
+    // MARK: -- handle collisions
+    
+    func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
+        print("colidiu")
     }
     
     // MARK: -- Update
@@ -115,13 +122,21 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             }
         }
     }
-        
+    
     func moveScenrary() {
         DispatchQueue.main.async {
             let scnView = self.view as! SCNView
             
             let nodes = scnView.scene?.rootNode.childNodes.filter { node in
                 node.name == "ground"
+            }
+            
+            let physicsNodes =  scnView.scene?.rootNode.childNodes { node, _ in
+                node.physicsBody != nil
+            }
+            
+            physicsNodes?.forEach { node in
+                node.physicsBody?.resetTransform()
             }
             
             for node in nodes! {
@@ -168,7 +183,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         label.text = "Score: \(self.sumTimer)"
         return sumTimer
     }
-
+    
     // MARK: -- Settings
     
     override var shouldAutorotate: Bool {

@@ -64,16 +64,14 @@ struct ObstacleFactory {
         var randomGroundPercent : Float  = Float(GKRandomSource.sharedRandom().nextInt(upperBound: 100))
         let squareSide : CGFloat =  CGFloat(BallFactory.ballRadius * 4.5)
         
-        while CGFloat(randomGroundPercent) >= 100 - (squareSide) / CGFloat(ScenaryFactory.groundWidth) {
+        while CGFloat(randomGroundPercent) >= 100 - (squareSide * 100) / CGFloat(ScenaryFactory.groundWidth) {
             randomGroundPercent  = Float(GKRandomSource.sharedRandom().nextInt(upperBound: 100))
-            print(randomGroundPercent, ">= 100 -", squareSide, "/", ScenaryFactory.groundWidth)
-            print(randomGroundPercent)
-            
         }
+
+        randomGroundPercent += 5
         
         let randomPlace = Float(randomGroundPercent/100) * Float(ScenaryFactory.groundWidth) - Float(ScenaryFactory.groundWidth)/2
-        
-        
+
         // big rectangle
         
         let leftPole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: obstaclesHeight, length: 0.2, chamferRadius: 0.0))
@@ -88,19 +86,14 @@ struct ObstacleFactory {
         rightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         rightPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
-        
         let topPole = SCNNode(geometry: SCNBox(width: totalTopObstacleSize , height: 0.2, length: 0.2, chamferRadius: 0.0))
         topPole.position = SCNVector3(x: 0, y: Float(obstaclesHeight), z: -10)
         topPole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "horizontalGreen")
         topPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         topPole.geometry?.firstMaterial?.emission.intensity = 0.5
-        
-        
-        
+
         // litleSquareObstacle
-        
-        
-        
+
         let topSquareObstaclePole = SCNNode(geometry: SCNBox(width: (squareSide) + obstacleWidth   , height: obstacleWidth , length: 0.05, chamferRadius: 0.0))
         
         let yObstacleTop : Float = BallFactory.ballHeight + Float(ScenaryFactory.groundHeight)/2 + (Float(squareSide) ) - Float(BallFactory.ballRadius)
@@ -117,9 +110,7 @@ struct ObstacleFactory {
         leftSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         leftSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
-        
-        
-        
+
         let rightSquareObstaclePole = SCNNode(geometry: SCNBox(width: obstacleWidth, height: ( squareSide) , length: 0.05, chamferRadius: 0.0))
         let yObstacleRight : Float = BallFactory.ballHeight + ScenaryFactory.groundHeight/2 +  Float(squareSide) / 2 - BallFactory.ballRadius
         
@@ -127,19 +118,13 @@ struct ObstacleFactory {
         rightSquareObstaclePole.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "linha3")
         rightSquareObstaclePole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         rightSquareObstaclePole.geometry?.firstMaterial?.emission.intensity = 0.5
-        
-        
-        
-        
-        
+
         let leftDownPoleWidth : CGFloat = CGFloat(ScenaryFactory.groundWidth) * CGFloat(randomGroundPercent)/100 - (obstacleWidth) - 0.1
         let leftDownPoleXPosition : Float =   ( -Float(ScenaryFactory.groundWidth)/2 + xLeftlitleSquarePosition) / 2 - Float(obstacleWidth) - 0.1
         
-        
         let rightDownPoleWidth : CGFloat = CGFloat(ScenaryFactory.groundWidth) - leftDownPoleWidth - 0.35
         let rightDownPoleXPosition : Float = rightSquareObstaclePole.position.x + (Float(rightDownPoleWidth) / 2) - Float(obstacleWidth)/2
-        
-        
+
         // down poles
         
         let downLeftPole = SCNNode(geometry: SCNBox(width:  leftDownPoleWidth , height: 0.2, length: 0.2, chamferRadius: 0.0))
@@ -150,17 +135,11 @@ struct ObstacleFactory {
         
         downLeftPole.name = "baixo"
         
-        
         let downLeftPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width:  leftDownPoleWidth , height: 0.2, length: 0.2, chamferRadius: 0.0), options: nil))
         
         downLeftPoleBody.categoryBitMask = 00000010
         
-        // downLeftPoleBody.contactTestBitMask = ballCategory
-        
-        //        downLeftPoleBody.isAffectedByGravity = false
-        
         downLeftPole.physicsBody = downLeftPoleBody
-        
         
         let downRightPole = SCNNode(geometry: SCNBox(width: rightDownPoleWidth , height: obstacleWidth , length: 0.2, chamferRadius: 0.0))
         downRightPole.position = SCNVector3(x: rightDownPoleXPosition, y: yObstacleRight - ( Float(squareSide) / 2 ) , z: -10)
@@ -168,20 +147,14 @@ struct ObstacleFactory {
         downRightPole.geometry?.firstMaterial?.emission.contents = UIColor(named: "lateralGreen")
         downRightPole.geometry?.firstMaterial?.emission.intensity = 0.5
         
-        
         downRightPole.name = "baixo"
         
         let downRightPoleBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width: rightDownPoleWidth , height: obstacleWidth , length: 0.2, chamferRadius: 0.0), options: nil))
         
         downRightPoleBody.categoryBitMask = 00000010
-        // downRightPoleBody.contactTestBitMask = ballCategory
-        
-        //        downRightPoleBody.isAffectedByGravity = false
         
         downRightPole.physicsBody = downRightPoleBody
-        
-        
-        
+
         let node = SCNNode()
         node.name = "obstacle"
         node.addChildNode(leftPole)
