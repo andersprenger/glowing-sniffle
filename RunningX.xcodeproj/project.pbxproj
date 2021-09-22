@@ -94,11 +94,11 @@
 		713F67DF26EA4BBD000223E1 /* RunningX */ = {
 			isa = PBXGroup;
 			children = (
-				B19CA37D26F3B81600CE0706 /* StartViewController.swift */,
 				713F67E026EA4BBD000223E1 /* AppDelegate.swift */,
+				713F67E426EA4BBD000223E1 /* GameViewController.swift */,
+				B19CA37D26F3B81600CE0706 /* StartViewController.swift */,
 				713196EC26F5A92600363094 /* Helpers */,
 				713196E726F59CC500363094 /* Factory */,
-				713F67E426EA4BBD000223E1 /* GameViewController.swift */,
 				713F67E626EA4BBD000223E1 /* Main.storyboard */,
 				713196E626F59BB100363094 /* Assets */,
 				713F67EB26EA4BBD000223E1 /* Info.plist */,

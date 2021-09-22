@@ -9,7 +9,6 @@ import UIKit
 import QuartzCore
 import SceneKit
 import CoreMotion
-import AVFoundation
 
 public let label = UILabel()
 
@@ -19,26 +18,14 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
 
     // ball
     var ball: SCNNode!
-    var ballHeight: Float = 0.2 / 2 + 0.3
     
     // timer
-    public var somaTimer = 0
+    public var sumTimer: Int = 0
     
-    // general vars
-    private var t: Float = 0
+    // imput helper vars
     var motionManager = CMMotionManager()
     var updateRate: Double = 1/60
     var yaw: Double = 0
-    
-    // ground
-    let nodeLength: CGFloat = 20
-    let howManyNodes: Int = 7
-    let groundHeight: CGFloat = 0.2
-    let groundWidth: CGFloat = 8
-    // obstacles
-    let obstaclesHeight: CGFloat = 4.5
-    let obstacleWidth: CGFloat = 0.1
-    let totalTopObstacleSize: CGFloat = 8.8 + 0.1 // tamanho do chao + obstacle width + um pouco pra fora
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -106,7 +93,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         createTimer()
         startControl()
-        //playMusic()
     }
     
     // MARK: -- Update
@@ -114,13 +100,12 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         moveScenrary()
         
-        self.t += 0.1
-        ball.position = SCNVector3(x: Float(yaw) * 0.1, y: ballHeight , z: -3)
+        ball.position = SCNVector3(x: Float(yaw) * 0.1, y: BallFactory.ballHeight , z: -3)
     }
     
     // MARK: -- Functions
     
-    func startControl(){
+    func startControl() {
         if motionManager.isDeviceMotionAvailable{
             motionManager.deviceMotionUpdateInterval = updateRate
             motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main){ (data, error) in
@@ -130,15 +115,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             }
         }
     }
-    
-    @objc func runTimer() -> Int {
-        somaTimer += 1
-        label.text = "Score: \(self.somaTimer)"
-        return somaTimer
-    }
-    
-
-    
+        
     func moveScenrary() {
         DispatchQueue.main.async {
             let scnView = self.view as! SCNView
@@ -150,8 +127,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             for node in nodes! {
                 node.position.z += 0.2
                 
-                if node.position.z > Float(self.nodeLength) {
-                    node.position.z -= Float(self.howManyNodes)*Float(self.nodeLength)
+                if node.position.z > ScenaryFactory.nodeLength {
+                    node.position.z -= ScenaryFactory.nodeLength * Float(ScenaryFactory.howManyNodes)
                     
                     let isNodeWithoutObstacle = node.childNodes.filter { node in
                         node.name == "obstacle"
@@ -174,18 +151,24 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         }
     }
     
-    func createTimer(){
+    func createTimer() {
         Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(runTimer), userInfo: nil, repeats: true)
         
         label.textColor = .white
         label.font = UIFont(name: "Arial", size: 30)
-        label.text = "Score: \(self.somaTimer)"
+        label.text = "Score: \(self.sumTimer)"
         label.frame = CGRect(x: 40, y: 20, width: 250, height: 50)
         
         let scnView = self.view as! SCNView
         scnView.addSubview(label)
     }
     
+    @objc func runTimer() -> Int {
+        sumTimer += 1
+        label.text = "Score: \(self.sumTimer)"
+        return sumTimer
+    }
+
     // MARK: -- Settings
     
     override var shouldAutorotate: Bool {
