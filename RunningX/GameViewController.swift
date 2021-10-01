@@ -13,19 +13,27 @@ import CoreMotion
 public let label = UILabel()
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysicsContactDelegate {
-    //media
+    // media
     var mediaPlayer: MediaPlayer = MediaPlayer()
     
     // ball
     var ball: SCNNode!
     
     // timer
-    public var sumTimer: Int = 0
+    private var timer: Timer? = nil
+    public var score: Int = 0
+    
+    // speed
+    var speed: Float = 0.2
+    
     
     // imput helper vars
     var motionManager = CMMotionManager()
     var updateRate: Double = 1/60
     var yaw: Double = 0
+    
+    // segues identifiers
+    let gameOverSegueID = "game-gameover-segue"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,7 +107,18 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     // MARK: -- handle collisions
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
-        print("colidiu")
+        speed = 0
+        timer?.invalidate()
+        
+        DispatchQueue.main.async {
+            self.performSegue(withIdentifier: self.gameOverSegueID, sender: nil)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let gameOverView = segue.destination as? GameOverViewController {
+            gameOverView.score = score
+        }
     }
     
     // MARK: -- Update
@@ -140,7 +159,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
             }
             
             for node in nodes! {
-                node.position.z += 0.2
+                node.position.z += self.speed
                 
                 if node.position.z > ScenaryFactory.nodeLength {
                     node.position.z -= ScenaryFactory.nodeLength * Float(ScenaryFactory.howManyNodes)
@@ -167,11 +186,11 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     }
     
     func createTimer() {
-        Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(runTimer), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(runTimer), userInfo: nil, repeats: true)
         
         label.textColor = .white
         label.font = UIFont(name: "Arial", size: 30)
-        label.text = "Score: \(self.sumTimer)"
+        label.text = "Score: \(self.score)"
         label.frame = CGRect(x: 40, y: 20, width: 250, height: 50)
         
         let scnView = self.view as! SCNView
@@ -179,9 +198,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     }
     
     @objc func runTimer() -> Int {
-        sumTimer += 1
-        label.text = "Score: \(self.sumTimer)"
-        return sumTimer
+        score += 1
+        label.text = "Score: \(self.score)"
+        return score
     }
     
     // MARK: -- Settings
