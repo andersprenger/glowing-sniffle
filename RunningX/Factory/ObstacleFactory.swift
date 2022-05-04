@@ -26,9 +26,9 @@ struct ObstacleFactory {
     static func createBlackHole() -> SCNNode {
         let bhheight: Float = 0.08
         
-        let blackHoleImage = SCNNode(geometry: SCNCylinder(radius: 1.0, height: 0.2))
-        blackHoleImage.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "blsckholebg2")
-        blackHoleImage.position = SCNVector3(0, 0.001, 0)
+//        let blackHoleImage = SCNNode(geometry: SCNCylinder(radius: 1.0, height: 0.2))
+//        blackHoleImage.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "blsckholebg2")
+//        blackHoleImage.position = SCNVector3(0, 0.001, 0)
         
         let blackHoleRing1 = SCNNode(geometry: SCNTorus(ringRadius: 1.1, pipeRadius: 0.025))
         blackHoleRing1.geometry?.firstMaterial?.diffuse.contents = UIColor(named: "blackHoleRing1Color")
@@ -54,7 +54,7 @@ struct ObstacleFactory {
         blackHoleRing3.physicsBody = blackHoleRing3Body
         
         let blackHole = SCNNode()
-        blackHole.addChildNode(blackHoleImage)
+//        blackHole.addChildNode(blackHoleImage)
         blackHole.addChildNode(blackHoleRing1)
         blackHole.addChildNode(blackHoleRing2)
         blackHole.addChildNode(blackHoleRing3)
