@@ -48,6 +48,11 @@ struct ObstacleFactory {
         blackHoleRing3.geometry?.firstMaterial?.emission.intensity = 0.5
         blackHoleRing3.position = SCNVector3(0, bhheight, 0)
         
+        let blackHoleRing3Body = SCNPhysicsBody(
+            type: .static, shape: SCNPhysicsShape(geometry: SCNTorus(ringRadius: 1.45, pipeRadius: 0.1), options: nil))
+        blackHoleRing3Body.categoryBitMask = 00000010
+        blackHoleRing3.physicsBody = blackHoleRing3Body
+        
         let blackHole = SCNNode()
         blackHole.addChildNode(blackHoleImage)
         blackHole.addChildNode(blackHoleRing1)
