@@ -13,6 +13,9 @@ import CoreMotion
 public let label = UILabel()
 
 class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysicsContactDelegate {
+    // game scene
+    var gameScene: SCNScene!
+    
     // media
     var mediaPlayer: MediaPlayer = MediaPlayer()
     
@@ -26,7 +29,6 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     // speed
     var speed: Float = 0.2
     
-    
     // imput helper vars
     var motionManager = CMMotionManager()
     var updateRate: Double = 1/60
@@ -39,12 +41,12 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         super.viewDidLoad()
         
         // create a new scene
-        let scene = SCNScene()
+        gameScene = SCNScene()
         
         // create and add a camera to the scene
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
-        scene.rootNode.addChildNode(cameraNode)
+        gameScene.rootNode.addChildNode(cameraNode)
         
         // place the camera
         cameraNode.position = SCNVector3(x: 0, y: 2, z: 0)
@@ -55,26 +57,27 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         lightNode.light = SCNLight()
         lightNode.light!.type = .omni
         lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
-        scene.rootNode.addChildNode(lightNode)
+        gameScene.rootNode.addChildNode(lightNode)
         
         // create and add an ambient light to the scene
         let ambientLightNode = SCNNode()
         ambientLightNode.light = SCNLight()
         ambientLightNode.light!.type = .ambient
         ambientLightNode.light!.color = UIColor.darkGray
-        scene.rootNode.addChildNode(ambientLightNode)
+        gameScene.rootNode.addChildNode(ambientLightNode)
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
         // set the scene to the view
-        scnView.scene = scene
+        scnView.scene = gameScene
         
         // allows the user to manipulate the camera
         scnView.allowsCameraControl = true
         
         // show statistics such as fps and timing information
-        scnView.showsStatistics = true
+//        scnView.showsStatistics = true
+//        scnView.debugOptions = .showPhysicsFields
         
         // init media stuff
         mediaPlayer.playMusic()
@@ -82,9 +85,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
         
         // configure the view
         scnView.backgroundColor = UIColor.black
-        scene.background.contents = mediaPlayer.videoPlayer
-        scene.background.wrapS = .repeat
-        scene.background.wrapT = .repeat
+        gameScene.background.contents = mediaPlayer.videoPlayer
+        gameScene.background.wrapS = .repeat
+        gameScene.background.wrapT = .repeat
         
         // set itself as delegate
         scnView.delegate = self
@@ -109,6 +112,9 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate, SCNPhysics
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
         speed = 0
         timer?.invalidate()
+        
+        self.gameScene.rootNode.childNodes.forEach { $0.removeFromParentNode() }
+        self.gameScene.rootNode.removeFromParentNode()
         
         DispatchQueue.main.async {
             self.performSegue(withIdentifier: self.gameOverSegueID, sender: nil)

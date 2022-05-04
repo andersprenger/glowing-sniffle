@@ -17,8 +17,8 @@ struct BallFactory {
         let ball = SCNNode(geometry: SCNSphere(radius: CGFloat(ballRadius)))
 
         ball.name = name
-        ball.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-        ball.geometry?.firstMaterial?.emission.contents = UIColor.red
+        ball.geometry?.firstMaterial?.diffuse.contents = UIColor.cyan
+        ball.geometry?.firstMaterial?.emission.contents = UIColor.cyan
 
         let body = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNSphere(radius: CGFloat(ballRadius)), options: nil))
         body.categoryBitMask = 00000001
